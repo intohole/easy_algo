@@ -1,12 +1,30 @@
+from matplotlib.scale import LogTransform
+
 from easy_algo.operation.operation import *
 
 
-
 class FeatureOperationFactory:
-    _registry = {}  # Registry to store custom operations
+    _registry = {
+        "minMaxNor": MinMaxNormalization,
+        "standardNor": Standardization,
+        "equalWidthBucket": FeatureEqualWidth,
+        "oneHot": OneHotEncoding,
+        "labelEncode": LabelEncoding,
+        "logTransform": LogTransform,
+        "power": PowerTransformation,
+        "modeMissing": ModeMissingValueImputation,
+        "meanMissing": MeanMissingValueImputation,
+        "medianMissing": MedianMissingValueImputation,
+        "hour": TimeFeatureHourExtraction,
+        "month": TimeFeatureMonthExtraction,
+        "week": TimeFeatureWeekExtraction,
+        "minute": TimeFeatureMinuteExtraction
+    }  # Registry to store custom operations
 
     @staticmethod
     def register(name, clazz):
+        if name in FeatureOperationFactory._registry:
+            raise TypeError("Duplicate operation named {}".format(name))
         """Register a custom feature operation class."""
         FeatureOperationFactory._registry[name] = clazz
 
@@ -16,34 +34,7 @@ class FeatureOperationFactory:
         if name in FeatureOperationFactory._registry:
             return FeatureOperationFactory._registry[name](*args, **kwargs)
 
-        if name == "minMaxNor":
-            return MinMaxNormalization()
-        elif name == "standardNor":
-            return Standardization(*args, **kwargs)
-        elif name == "equalWidthBucket":
-            return FeatureEqualWidth(*args, **kwargs)
-        elif name == "oneHot":
-            return OneHotEncoding()
-        elif name == "labelEncode":
-            return LabelEncoding()
-        elif name == "logTransform":
-            return LogTransformation()
-        elif name == "power":
-            return PowerTransformation()
-        elif name == "modeImputation":
-            return ModeMissingValueImputation()
-        elif name == "meanImputation":
-            return MeanMissingValueImputation()
-        elif name == "medianImputation":
-            return MedianMissingValueImputation()
-        elif name == "hour":
-            return TimeFeatureHourExtraction()
-        elif name == "month":
-            return TimeFeatureMonthExtraction()
-        elif name == "minute":
-            return TimeFeatureMinuteExtraction()
-        else:
-            raise ValueError("Unsupported feature operation name")
+        raise ValueError("Unsupported feature operation name")
 
     @staticmethod
     def create_operation(name, feature, *args, **kwargs):
