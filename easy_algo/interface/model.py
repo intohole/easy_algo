@@ -1,6 +1,7 @@
 class BaseModel:
     def __init__(self):
         self.model = None
+        self.params = None
 
     def build(self):
         pass

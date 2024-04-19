@@ -1,5 +1,6 @@
 from easy_algo.param import Param
 
+
 class EnhancedLightGBMConfig(Param):
     """
     增强型LightGBM配置生成器
@@ -26,9 +27,11 @@ class EnhancedLightGBMConfig(Param):
         :param lambda_l2: L2正则化系数
         :param is_unbalance: 是否为不平衡数据
         """
+
         super().__init__(task_type)
+        self.task = task_type.value
+
         self.config = {
-            'task': task_type,
             'boosting_type': boosting_type,
             'num_leaves': num_leaves,
             'learning_rate': learning_rate,
@@ -70,10 +73,11 @@ class EnhancedLightGBMConfig(Param):
         """
         获取最终的配置
         """
-        if self.config['task'] == 'regression':
+        if self.task == 'regression':
             self.set_params_for_regression()
-        elif self.config['task'] == 'classification':
+        elif self.task == 'classification':
             self.set_params_for_classification()
-        elif self.config['task'] == 'ranking':
+        elif self.task == 'ranking':
             self.set_params_for_ranking()
+
         return self.config

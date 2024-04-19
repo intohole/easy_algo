@@ -9,22 +9,23 @@ import lightgbm as lgb
 class LgbBinaryClassifierBuilder(BaseModel):
 
     def build(self):
+
         self.model = lgb.LGBMClassifier(
-            EnhancedLightGBMConfig(TaskType.CLASSIFICATION).get_config()
+            **EnhancedLightGBMConfig(TaskType.CLASSIFICATION).get_config()
         )
 
 
 class LgbRegressorBuilder(BaseModel):
     def build(self):
         self.model = lgb.LGBMRegressor(
-            EnhancedLightGBMConfig(TaskType.REGRESSION).get_config()
+            **EnhancedLightGBMConfig(TaskType.REGRESSION).get_config()
         )
 
 
 class LgbTrainer(BaseModel):
 
     def train(self, x, y):
-        self.model = lgb.train(x, y)
+        self.model.fit(x, y)
 
 
 class LgbPredict(BaseModel):
@@ -67,17 +68,17 @@ class LgbRegressorMaeEvaluator(BaseModel):
         return mae
 
 
-class LgbBinaryClassifierAcc(LgbBinaryClassifierAccEvaluator, LgbTrainer, LgbPredict, LgbBinaryClassifierAccEvaluator):
+class LgbBinaryClassifierAcc(LgbBinaryClassifierBuilder, LgbTrainer, LgbPredict, LgbBinaryClassifierAccEvaluator):
     pass
 
 
-class LgbBinaryClassifierAuc(LgbBinaryClassifierAccEvaluator, LgbTrainer, LgbPredict, LgbBinaryClassifierAucEvaluator):
+class LgbBinaryClassifierAuc(LgbBinaryClassifierBuilder, LgbTrainer, LgbPredict, LgbBinaryClassifierAucEvaluator):
     pass
 
 
-class LgbRegressorMse(LgbRegressorMseEvaluator, LgbTrainer, LgbPredict, LgbRegressorMseEvaluator):
+class LgbRegressorMse(LgbRegressorBuilder, LgbTrainer, LgbPredict, LgbRegressorMseEvaluator):
     pass
 
 
-class LgbRegressorMae(LgbRegressorMseEvaluator, LgbTrainer, LgbPredict, LgbRegressorMaeEvaluator):
+class LgbRegressorMae(LgbRegressorBuilder, LgbTrainer, LgbPredict, LgbRegressorMaeEvaluator):
     pass
