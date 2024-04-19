@@ -19,7 +19,7 @@ class DataSource(object):
     def drop(self, condition):
         raise NotImplementedError
 
-    def getXy(self, features):
+    def get_xy(self, features):
         raise NotImplementedError
 
 
@@ -51,7 +51,7 @@ class PandaDataSource(DataSource):
             raise ValueError("Condition cannot be None")
         self.data_frame[condition] = value
 
-    def getXy(self, features):
+    def get_xy(self, features):
         if features is None:
             raise ValueError("Features cannot be None")
         feature_names = [_.feature_name for _ in features if _.train_able and _.type == FEATURE_TYPE.feature]

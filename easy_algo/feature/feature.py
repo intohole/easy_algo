@@ -1,9 +1,10 @@
-from enum import Enum
+from easy_algo.util.constant import FeatureType
 
-FEATURE_TYPE = Enum("FeatureType",("feature","label","other"))
 
 class Feature(object):
-    def __init__(self, feature_name, value_type= FEATURE_TYPE.feature, feature_process=[],cover_name = False):
+    def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, cover_name=False):
+        if feature_process is None:
+            feature_process = []
         self.value_type = value_type
         self.feature_name = feature_name
         self.type = value_type
@@ -14,16 +15,18 @@ class Feature(object):
 
 
 class DenseFeature(Feature):
-    def __init__(self, feature_name, value_type='feature', feature_process=[]):
+    def __init__(self, feature_name, value_type='feature', feature_process=None):
         super(DenseFeature, self).__init__(feature_name, value_type, feature_process)
+        if feature_process is None:
+            feature_process = []
         self.bucket_num = None
         self.condition_map = {}
 
 
-
-
 class CategoryFeature(Feature):
-    def __init__(self, feature_name, voca_size, out_dim, value_type='feature', feature_process=[]):
+    def __init__(self, feature_name, voca_size, out_dim, value_type='feature', feature_process=None):
         super(CategoryFeature, self).__init__(feature_name, value_type, feature_process)
+        if feature_process is None:
+            feature_process = []
         self.voca_size = voca_size
         self.out_dim = out_dim

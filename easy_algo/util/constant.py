@@ -9,4 +9,7 @@ class TaskType(Enum):
     RANKING = "ranking"
 
 
-
+class FeatureType(Enum):
+    Feature = "feature"
+    Label = "label"
+    Other = "other"
