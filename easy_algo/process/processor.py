@@ -11,6 +11,7 @@ class Preprocess:
         self._build_feature()
 
     def _build_feature(self):
+        # 构建一个feature按照group的map，group对应深度学习的层，这样就可以定制化服务
         # construct feature
         for feature in self.feature_columns:
             if feature.feature_process is None or len(feature.feature_process) == 0:
@@ -68,4 +69,5 @@ class PandasPreprocess(Preprocess):
 
     def evaluate(self):
         pass
+
 

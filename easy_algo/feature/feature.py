@@ -2,7 +2,8 @@ from easy_algo.util.constant import FeatureType
 
 
 class Feature(object):
-    def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, cover_name=False):
+    def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, group=None,
+                 cover_name=False):
         if feature_process is None:
             feature_process = []
         self.value_type = value_type
@@ -12,6 +13,7 @@ class Feature(object):
         self.cover_name = cover_name
         self.processors = []
         self.train_able = True
+        self.group = "default" if group is None else group
 
 
 class DenseFeature(Feature):
