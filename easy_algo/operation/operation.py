@@ -44,8 +44,8 @@ class MinMaxNormalization(FeatureOperation):
             self.min_val = data_source.data[self.name].min()
         if self.max_val is None:
             self.max_val = data_source.data[self.name].max()
-            data_source.data[self.get_feature_name(field)] = (data_source.data[field] - self.min_val) / (
-                    self.max_val - self.min_val)
+        data_source.data[self.get_feature_name(field)] = (data_source.data[field] - self.min_val) / (
+                self.max_val - self.min_val)
 
 
 class Standardization(FeatureOperation):
@@ -66,7 +66,9 @@ class FeatureBucket(FeatureOperation):
     def __init__(self, name, method='equal_width', num_bins=5):
         super(FeatureBucket, self).__init__(name, suffix_name='binned')
         self.method = method
-        self.num_bins = num_bins
+        self.num_bins = self._feature.bucket_num
+        if self._feature.bucket_num is None:
+            raise ValueError("please set feature bucket num")
         self.binning = None
         self._init()
 
@@ -86,13 +88,13 @@ class FeatureBucket(FeatureOperation):
 
 class FeatureEqualWidth(FeatureBucket):
 
-    def __init__(self, num_bins=5):
+    def __init__(self):
         super(FeatureEqualWidth, self).__init__(name="equalWidthBucket", method="equal_width", num_bins=num_bins)
 
 
 class FeatureEqualFrequency(FeatureBucket):
 
-    def __init__(self, num_bins=5):
+    def __init__(self):
         super(FeatureEqualFrequency).__init__(name="equalFrequencyBucket", method="equal_frequency", num_bins=num_bins)
 
 
@@ -140,7 +142,7 @@ class PowerTransformation(FeatureOperation):
 
 class MissingValueImputation(FeatureOperation):
     def __init__(self, name, strategy='mean'):
-        super(MissingValueImputation, self).__init__(name,suffix_name="mean")
+        super(MissingValueImputation, self).__init__(name, suffix_name="mean")
         self.strategy = strategy
         self.imputer = SimpleImputer(strategy=self.strategy)
 
@@ -198,11 +200,10 @@ class TimeFeatureMinuteExtraction(FeatureOperation):
         data_source.data[self.get_feature_name(field)] = data_source.data[field].dt.minute.astype('int')
 
 
-def serialize_to_file(obj, filename):
-    with open(filename, 'wb') as file:
-        pickle.dump(obj, file)
+class UserDefineConditionMap(FeatureOperation):
 
+    def __init__(self):
+        super(UserDefineConditionMap, self).__init__("conditionMap", suffix_name="cdm")
 
-def deserialize_from_file(filename):
-    with open(filename, 'rb') as file:
-        return pickle.load(file)
+    def process(self, data_source, field):
+        pass
