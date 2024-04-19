@@ -1,6 +1,7 @@
 from easy_algo.operation import *
 from sklearn.model_selection import train_test_split
 from random import randint
+from easy_algo.util.collection_utils import *
 
 
 class Preprocess:
@@ -9,6 +10,12 @@ class Preprocess:
         self.data = data_source
         self.feature_columns = feature_columns
         self._build_feature()
+        self.group_map = features_to_group_map(feature_columns,"group")
+
+    def group_list_feature(self,group):
+        if group not in self.group_map:
+            return ""
+        return ",".join([feature.feature_name for feature in self.group_map[group]])
 
     def _build_feature(self):
         # 构建一个feature按照group的map，group对应深度学习的层，这样就可以定制化服务
