@@ -1,4 +1,3 @@
-from easy_algo.source.source import PandaDataSource
 from easy_algo.operation import *
 from sklearn.model_selection import train_test_split
 from random import randint
@@ -22,7 +21,13 @@ class Preprocess:
     def before_process(self):
         raise NotImplementedError
 
-    def after_process(self):
+    def train(self):
+        raise NotImplementedError
+
+    def evaluate(self):
+        raise NotImplementedError
+
+    def predict(self):
         raise NotImplementedError
 
     def process(self):
@@ -41,7 +46,7 @@ class PandasPreprocess(Preprocess):
         super().__init__(data, feature_columns)
         self.before_process()
         self.process()
-        self.after_process()
+        self.train()
         self.test_size = test_size
         self.random_state = random_state
 
@@ -57,3 +62,10 @@ class PandasPreprocess(Preprocess):
         X, y = self.data.getXy(features=self.feature_columns)
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.random_state)
         return x_train, y_train, x_test, y_test
+
+    def train(self):
+        pass
+
+    def evaluate(self):
+        pass
+
