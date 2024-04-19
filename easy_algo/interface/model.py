@@ -1,14 +1,15 @@
-from easy_algo.util.constant import TaskType
+class BaseModel:
+    def __init__(self):
+        self.model = None
 
+    def build(self):
+        pass
 
-class Model:
+    def train(self, x, y):
+        pass
 
-    def __init__(self,task_type = TaskType.CLASSIFICATION):
-        self.task_type = task_type
+    def predict(self, x):
+        pass
 
-    def train(self, x_train, y_train, *args, **kwargs):
-        raise NotImplementedError
-
-    def predict(self, x_test, *args, **kwargs):
-        raise NotImplementedError
-
+    def evaluate(self, x, y):
+        pass

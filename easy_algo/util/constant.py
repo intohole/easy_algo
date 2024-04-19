@@ -1,3 +1,8 @@
 from enum import Enum
 
-TaskType = Enum("TaskType", ("regression", "classification", "clustering"))
+
+class TaskType(Enum):
+    REGRESSION = "regression"
+    CLASSIFICATION = "classification"
+    CLUSTERING = "clustering"
+    RANKING = "ranking"
