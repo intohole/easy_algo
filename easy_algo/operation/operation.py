@@ -1,7 +1,6 @@
 from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder, LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import PowerTransformer
-import pickle
 import numpy as np
 
 
@@ -202,8 +201,12 @@ class TimeFeatureMinuteExtraction(FeatureOperation):
 
 class UserDefineConditionMap(FeatureOperation):
 
-    def __init__(self):
+    def __init__(self, name, feature=None, cover_name=True, suffix_name=None):
         super(UserDefineConditionMap, self).__init__("conditionMap", suffix_name="cdm")
+        self.condition_map = {}
 
     def process(self, data_source, field):
-        pass
+        # 遍历条件映射，根据条件对数据进行处理
+        for condition, value in self.condition_map.items():
+            data_source.data.loc[data_source.data[field] == condition, self.get_feature_name(field)] = value
+
