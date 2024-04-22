@@ -44,14 +44,37 @@ class FeatureGroup:
         return sum(_.shape for _ in self.features), 1
 
 
+class FeatureGroup:
+    def __init__(self, group_name, group_features):
+        self.group_name = group_name
+        self.features = group_features
+        self.shape = sum(_.shape for _ in self.features)
+
+    @property
+    def features(self):
+        """
+        获取features属性的值。
+        """
+        return self._features
+
+    @features.setter
+    def features(self, value):
+        """
+        更新features属性时，自动更新shape属性。
+        """
+        self._features = value
+        self.shape = sum(_.shape for _ in self.features)
+
+
 class FeatureSchema:
 
-    def __init__(self, category_cols, features=None, data_source=None):
+    def __init__(self, category_cols=None, features=None, data_source=None):
         if features is None and data_source is None:
             raise ValueError("FeatureSchema needs features or data_source")
         self.columns = data_source.columns if data_source is not None else []
         self.category_cols = category_cols
         self.features = {}
+        self.build_features()
 
     def build_features(self):
         for col in self.columns:
@@ -69,7 +92,7 @@ class FeatureSchema:
                 continue
             raise ValueError(f"Column {col} not found in features.")
 
-    def __getitem__(self, key):
-        if key in self.features:
-            return self.features[key]
-        super(FeatureSchema, self).__getitem__(key)
+    def __getitem__(self, item):
+        if isinstance(item,str) and item in self.features:
+            return self.features[item]
+        super(FeatureSchema, self).__getitem__(item)
