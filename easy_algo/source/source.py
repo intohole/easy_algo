@@ -56,6 +56,7 @@ class PandaDataSource(DataSource):
         feature_names = [_.feature_name for _ in features if _.train_able and _.type == FEATURE_TYPE.feature]
         label_names = [_.feature_name for _ in features if _.train_able and _.type == FEATURE_TYPE.label]
         return self.data_frame[feature_names].values, self.data_frame[label_names].values
+
     def get_xy(self, features, test_condition=None):
         if features is None:
             raise ValueError("Features cannot be None")
