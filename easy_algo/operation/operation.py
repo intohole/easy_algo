@@ -5,11 +5,27 @@ import numpy as np
 
 
 class FeatureOperation:
-    def __init__(self, name, feature=None, cover_name=True, suffix_name=None):
+    def __init__(self, name, suffix_name=None):
         self.name = name
-        self._feature = feature
-        self.cover_name = cover_name
+        self._feature = None
+        self._cover_name = False
         self.suffix_name = suffix_name
+
+    @property
+    def feature(self):
+        return self._feature
+
+    @property
+    def cover_name(self):
+        return self._cover_name
+
+    @cover_name.setter
+    def cover_name(self, value):
+        self._cover_name = value
+
+    @feature.setter
+    def feature(self, feature):
+        self._feature = feature
 
     def get_feature_name(self, field):
         if self.cover_name:
@@ -48,7 +64,7 @@ class MinMaxNormalization(FeatureOperation):
 
 
 class Standardization(FeatureOperation):
-    def __init__(self, name):
+    def __init__(self):
         super(Standardization, self).__init__("standardNor", suffix_name="std")
         self.std_val = None
         self.mean_val = None
@@ -199,14 +215,23 @@ class TimeFeatureMinuteExtraction(FeatureOperation):
         data_source.data[self.get_feature_name(field)] = data_source.data[field].dt.minute.astype('int')
 
 
-class UserDefineConditionMap(FeatureOperation):
+class UserDefinedFunction(FeatureOperation):
 
-    def __init__(self, name, feature=None, cover_name=True, suffix_name=None):
-        super(UserDefineConditionMap, self).__init__("conditionMap", suffix_name="cdm")
-        self.condition_map = {}
+    def __init__(self):
+        super(UserDefinedFunction, self).__init__("fun", suffix_name="fun")
+        self.fun = self.feature.fun
 
     def process(self, data_source, field):
-        # 遍历条件映射，根据条件对数据进行处理
-        for condition, value in self.condition_map.items():
-            data_source.data.loc[data_source.data[field] == condition, self.get_feature_name(field)] = value
+        data_source.data[self.get_feature_name(field)] = data_source.data[field].apply(lambda x: self.fun(x), axis=1)
 
+
+class DataTypeConversion(FeatureOperation):
+    def __init__(self):
+        super(DataTypeConversion, self).__init__("typeConv", suffix_name="ty")
+        self.to_type = self.feature.dtype
+        if self.to_type is None:
+            raise ValueError("Cannot convert to type for feature " + self.feature.name)
+
+    def process(self, data_source, field):
+        # 转换数据类型
+        data_source.data[self.get_feature_name(field)] = data_source.data[field].astype(self.to_type)

@@ -1,5 +1,6 @@
 from easy_algo.dl.layer.layer import *
 from easy_algo.dl.layer.fm import *
+from easy_algo.dl.layer.dnn import *
 from easy_algo.util.manager import ModelFactory
 from easy_algo.dl.layer.fm import FMLayer
 import tensorflow as tf

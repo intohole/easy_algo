@@ -4,7 +4,7 @@ from easy_algo.util.constant import FeatureType
 # 基础的Feature类，用于表示特征
 class Feature(object):
     def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, group=None,
-                 cover_name=False, default_value=None, shape=None):
+                 cover_name=False, default_value=None, shape=None, dtype=None, fun=None):
         if feature_process is None:
             feature_process = []
         self.value_type = value_type  # 特征值的类型
@@ -17,6 +17,8 @@ class Feature(object):
         self.group = "default" if group is None else group  # 用于标识模型的组别
         self.shape = shape  # 数据大小，用于向量化准备
         self.default_value = default_value
+        self.dtype = dtype
+        self.fun = fun
 
 
 class DenseFeature(Feature):
@@ -32,57 +34,3 @@ class CategoryFeature(Feature):
         super(CategoryFeature, self).__init__(feature_name, value_type, feature_process)
         self.voca_size = voca_size  # 词汇表大小
         self.out_dim = out_dim  # 输出维度
-
-
-class FeatureGroup:
-    def __init__(self, group_name, group_features):
-        self.group_name = group_name
-        self.features = group_features
-        self.shape = sum(_.shape for _ in self.features)
-
-    @property
-    def features(self):
-        """
-        获取features属性的值。
-        """
-        return self._features
-
-    @features.setter
-    def features(self, value):
-        """
-        更新features属性时，自动更新shape属性。
-        """
-        self._features = value
-        self.shape = sum(_.shape for _ in self.features)
-
-
-class FeatureSchema:
-
-    def __init__(self, category_cols=None, features=None, data_source=None):
-        if features is None and data_source is None:
-            raise ValueError("FeatureSchema needs features or data_source")
-        self.columns = data_source.columns if data_source is not None else []
-        self.category_cols = category_cols
-        self.features = {}
-        self.build_features()
-
-    def build_features(self):
-        for col in self.columns:
-            if col in self.category_cols:
-                feature = CategoryFeature(feature_name=col, voca_size=100, out_dim=10)
-            else:
-                feature = DenseFeature(feature_name=col)
-            self.features[col] = feature
-
-    def update_features(self, col_names, attr, value):
-        # 更新特定列的Feature对象的属性
-        for col in col_names:
-            if col in self.features:
-                setattr(self.features[col], attr, value)
-                continue
-            raise ValueError(f"Column {col} not found in features.")
-
-    def __getitem__(self, item):
-        if isinstance(item, str) and item in self.features:
-            return self.features[item]
-        super(FeatureSchema, self).__getitem__(item)
