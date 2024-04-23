@@ -3,12 +3,12 @@ from easy_algo.util.constant import FeatureType
 
 # 基础的Feature类，用于表示特征
 class Feature(object):
-    def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, group=None,
+    def __init__(self, col_name, value_type=FeatureType.Feature, feature_process=None, group=None,
                  cover_name=False, default_value=None, shape=None, dtype=None, fun=None):
         if feature_process is None:
             feature_process = []
         self.value_type = value_type  # 特征值的类型
-        self.feature_name = feature_name  # 特征的名称
+        self.col_name = col_name  # 特征的名称
         self.type = value_type  # 特征的类型
         self.feature_process = feature_process  # 特征的处理方法列表
         self.cover_name = cover_name  # 是否覆盖特征名称
@@ -19,18 +19,18 @@ class Feature(object):
         self.default_value = default_value
         self.dtype = dtype
         self.fun = fun
+        self._origin_type = None
 
 
 class DenseFeature(Feature):
-    def __init__(self, feature_name, value_type='feature', feature_process=None):
-        super(DenseFeature, self).__init__(feature_name, value_type, feature_process)
+    def __init__(self, col_name, feature_process=None):
+        super(DenseFeature, self).__init__(col_name, feature_process)
         self.bucket_num = None  # 桶的数量（用于分桶特征）
-        self.condition_map = {}  # 条件映射
 
 
 # 类别特征类，继承自Feature
 class CategoryFeature(Feature):
-    def __init__(self, feature_name, voca_size, out_dim, value_type='feature', feature_process=None):
-        super(CategoryFeature, self).__init__(feature_name, value_type, feature_process)
-        self.voca_size = voca_size  # 词汇表大小
-        self.out_dim = out_dim  # 输出维度
+    def __init__(self, col_name, feature_process=None):
+        super(CategoryFeature, self).__init__(col_name, feature_process)
+        self.voca_size = None  # 词汇表大小
+        self.out_dim = None  # 输出维度

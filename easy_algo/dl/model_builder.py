@@ -11,13 +11,8 @@ class ModelBuilder:
         self.input_layer_map = {_: tf.keras.layers.Input(shape=(10,)) for _ in ["group"]}
         self.config = config
         self.schema = schema
-        if schema is not None:
-            self.init_schema()
         self.outputs = self.build_model()
         self.model = Model(inputs=[self.input_layer_map[_] for _ in ["group"]], outputs=self.outputs)
-
-    def init_schema(self):
-        pass
 
     def get_layer(self, layer, *args, **kwargs):
         if isinstance(layer, str) and layer in self.input_layer_map:
