@@ -1,24 +1,27 @@
-from easy_algo.ml.lgb import *
-import easy_algo.dl
-import easy_algo.ml
-
-
 class ModelFactory(object):
-    _registry = {
-
-    }  # Registry to store custom operations
+    _registry = {}
 
     @staticmethod
-    def register(name, clazz):
+    def register(name, clazz,default_params=None):
         if name in ModelFactory._registry:
             raise TypeError("Duplicate operation named {}".format(name))
-        """Register a custom feature operation class."""
-        ModelFactory._registry[name] = clazz
+
+        # Define a function to handle the creation with default parameters
+        def create_with_defaults(*args, **kwargs):
+            params = default_params.copy() if default_params else {}
+            params.update(kwargs)
+            return clazz(*args, **params)
+
+        ModelFactory._registry[name] = create_with_defaults
+
+    @staticmethod
+    def list():
+        return list(ModelFactory._registry.keys())
 
     @staticmethod
     def create(name, *args, **kwargs):
-        # Check if the operation is in the registry
-        if name in ModelFactory._registry:
-            return ModelFactory._registry[name](*args, **kwargs)
+        if name not in ModelFactory._registry:
+            raise ValueError("Unsupported feature operation name")
 
-        raise ValueError("Unsupported feature operation name")
+        # Use the registered function to create the instance
+        return ModelFactory._registry[name](*args, **kwargs)

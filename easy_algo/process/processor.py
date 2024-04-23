@@ -70,11 +70,11 @@ class PandasPreprocess(Preprocess):
         self.random_state = random_state
         self.model_config = model_config
         self.model = self.build_model(*args, **kwargs)
-        self.x_train, self.y_train, self.x_test, self.y_test = self.train_data()
+        self.x_train, self.y_train, self.x_test, self.y_test = self.split_data()
 
     def build_model(self, *args, **kwargs):
         if isinstance(self.model_config, str):
-            return ModelFactory.create_model(self.model_config, *args, **kwargs)
+            return ModelFactory.create(self.model_config, *args, **kwargs)
 
     def get_columns(self):
         return self.data.columns
@@ -84,7 +84,7 @@ class PandasPreprocess(Preprocess):
             for process in feature.processors:
                 process.process(self.data, feature.feature_name)
 
-    def train_data(self):
+    def split_data(self):
         X, y = self.data.getXy(features=self.feature_columns)
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size,
                                                             random_state=self.random_state)

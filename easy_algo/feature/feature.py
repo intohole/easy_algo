@@ -4,7 +4,7 @@ from easy_algo.util.constant import FeatureType
 # 基础的Feature类，用于表示特征
 class Feature(object):
     def __init__(self, feature_name, value_type=FeatureType.Feature, feature_process=None, group=None,
-                 cover_name=False, shape=None):
+                 cover_name=False, default_value=None, shape=None):
         if feature_process is None:
             feature_process = []
         self.value_type = value_type  # 特征值的类型
@@ -16,9 +16,9 @@ class Feature(object):
         self.train_able = True  # 如果为True，则此特征是可训练的
         self.group = "default" if group is None else group  # 用于标识模型的组别
         self.shape = shape  # 数据大小，用于向量化准备
+        self.default_value = default_value
 
 
-# 密集特征类，继承自Feature
 class DenseFeature(Feature):
     def __init__(self, feature_name, value_type='feature', feature_process=None):
         super(DenseFeature, self).__init__(feature_name, value_type, feature_process)
@@ -32,16 +32,6 @@ class CategoryFeature(Feature):
         super(CategoryFeature, self).__init__(feature_name, value_type, feature_process)
         self.voca_size = voca_size  # 词汇表大小
         self.out_dim = out_dim  # 输出维度
-
-
-class FeatureGroup:
-
-    def __init__(self, group_name, group_features):
-        self.features = group_features
-        self.group_name = group_name
-
-    def get_feature_shape(self):
-        return sum(_.shape for _ in self.features), 1
 
 
 class FeatureGroup:
@@ -93,6 +83,6 @@ class FeatureSchema:
             raise ValueError(f"Column {col} not found in features.")
 
     def __getitem__(self, item):
-        if isinstance(item,str) and item in self.features:
+        if isinstance(item, str) and item in self.features:
             return self.features[item]
         super(FeatureSchema, self).__getitem__(item)

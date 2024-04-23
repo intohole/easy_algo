@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from easy_algo.util.manager import LayerFactory
+from easy_algo.util.manager import ModelFactory
 
 
 class ModelBuilder:
@@ -16,15 +16,18 @@ class ModelBuilder:
         self.outputs = self.build_model()
         self.model = Model(inputs=[self.input_layer_map[_] for _ in ["group"]], outputs=self.outputs)
 
+    def init_schema(self):
+        pass
+
     def get_layer(self, layer, *args, **kwargs):
         if isinstance(layer, str) and layer in self.input_layer_map:
             return self.input_layer_map[layer]
         if isinstance(layer, str):
-            return LayerFactory.craete(layer)
+            return ModelFactory.create(layer)
         elif isinstance(layer, dict):
             _layer = layer.copy()
             del _layer["layer"]
-            return LayerFactory.craete(layer["layer"], **_layer)
+            return ModelFactory.create(layer["layer"], **_layer)
         else:
             raise NotImplementedError("Layer type not supported")
 

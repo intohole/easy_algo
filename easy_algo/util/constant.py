@@ -4,6 +4,7 @@ from enum import Enum
 class TaskType(Enum):
     REGRESSION = "regression"
     CLASSIFICATION = "classification"
+    MULTICLASS_CLASSIFICATION = "multiclass_classification"
     BINARY = "binary"
     CLUSTERING = "clustering"
     RANKING = "ranking"

@@ -1,4 +1,5 @@
 from easy_algo.param import Param
+from easy_algo.util.constant import TaskType
 
 
 class EnhancedLightGBMConfig(Param):
@@ -7,7 +8,7 @@ class EnhancedLightGBMConfig(Param):
     """
 
     def __init__(self, task_type, boosting_type='gbdt', num_leaves=31, max_depth=-1,
-                 learning_rate=0.1, n_estimators=100,
+                 learning_rate=0.1, n_estimators=500,
                  subsample_for_bin=200000, objective=None, class_weight=None,
                  min_split_gain=0., min_child_weight=1e-3, min_child_samples=20,
                  subsample=1., subsample_freq=0, colsample_bytree=1.,
@@ -34,9 +35,10 @@ class EnhancedLightGBMConfig(Param):
 
         super().__init__(task_type)
         self.task = task_type.value
+        self.num_class = kwargs.get('num_class')
 
-        self.params = params = {
-            'boosting_type': 'gbdt',
+        self.params = {
+            'boosting_type': boosting_type,
             'num_leaves': num_leaves,
             'max_depth': max_depth,
             'learning_rate': learning_rate,
@@ -79,15 +81,27 @@ class EnhancedLightGBMConfig(Param):
         self.params['objective'] = 'lambdarank'
         self.params['metric'] = 'ndcg'
 
+    def set_params_for_multiclassification(self):
+        """
+        为多分类任务设置参数
+        """
+        self.params['objective'] = 'multiclass'
+        self.params['metric'] = 'multi_logloss'
+        if self.num_class is None:
+            raise ValueError("please set num_class parameter")
+        self.params['num_class'] = self.num_class  # 假设默认类别数为3，可以根据需要修改
+
     def get_config(self):
         """
         获取最终的配置
         """
-        if self.task == 'regression':
+        if self.task == TaskType.REGRESSION.value:
             self.set_params_for_regression()
-        elif self.task == 'classification':
+        elif self.task == TaskType.BINARY.value:
             self.set_params_for_classification()
-        elif self.task == 'ranking':
+        elif self.task == TaskType.MULTICLASS_CLASSIFICATION.value:
+            self.set_params_for_multiclassification()
+        elif self.task == TaskType.RANKING.value:
             self.set_params_for_ranking()
 
         return self.params

@@ -1,8 +1,8 @@
 def log_decorator(func):
     def wrapper(*args, **kwargs):
-        print(f"开始执行 {func.__name__}")
+        print(f"start exec {func.__name__}")
         result = func(*args, **kwargs)
-        print(f"{func.__name__} 执行完成")
+        print(f"{func.__name__} executed successfully")
         return result
 
     return wrapper

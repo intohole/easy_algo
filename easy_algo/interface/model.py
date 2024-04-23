@@ -1,5 +1,5 @@
 class BaseModel:
-    def __init__(self):
+    def __init__(self,*args,**kwargs):
         self.model = None
         self.params = None
         self.group = None
