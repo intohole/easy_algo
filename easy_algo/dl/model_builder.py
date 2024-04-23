@@ -5,7 +5,7 @@ from easy_algo.util.manager import ModelFactory
 
 class ModelBuilder:
 
-    def __init__(self, config,schema = None):
+    def __init__(self, config, schema=None):
         if config is None:
             raise ValueError("Config cannot be None")
         self.input_layer_map = {_: tf.keras.layers.Input(shape=(10,)) for _ in ["group"]}

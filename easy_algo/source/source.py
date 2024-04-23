@@ -1,5 +1,7 @@
 import pandas as pd
-from easy_algo.feature.feature import FEATURE_TYPE
+from easy_algo.util.constant import FeatureType
+from collections import defaultdict
+
 
 class DataSource(object):
 

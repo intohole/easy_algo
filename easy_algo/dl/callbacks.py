@@ -1,12 +1,5 @@
-import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from enum import Enum
-
-
-class CallbackType(Enum):
-    EARLY_STOPPING = 'early_stopping'
-    MODEL_CHECKPOINT = 'model_checkpoint'
-    REDUCE_LR_ON_PLATEAU = 'reduce_lr_on_plateau'
+from easy_algo.util.constant import Callback
 
 
 class CallbackBuilder:
@@ -48,11 +41,11 @@ class CallbackBuilder:
         return self.callbacks
 
     def _parse_callback_config(self, callback_type, config):
-        if callback_type == CallbackType.EARLY_STOPPING:
+        if callback_type == Callback.EARLY_STOPPING:
             return EarlyStopping(**config)
-        elif callback_type == CallbackType.MODEL_CHECKPOINT:
+        elif callback_type == Callback.MODEL_CHECKPOINT:
             return ModelCheckpoint(**config)
-        elif callback_type == CallbackType.REDUCE_LR_ON_PLATEAU:
+        elif callback_type == Callback.REDUCE_LR_ON_PLATEAU:
             return ReduceLROnPlateau(**config)
         else:
             raise ValueError("Unknown callback type")
@@ -62,7 +55,6 @@ class CallbackBuilder:
         从JSON字符串构建回调。
         """
         for callback_type, params in config.items():
-            callback = self._parse_callback_config(CallbackType[callback_type], params)
+            callback = self._parse_callback_config(Callback[callback_type], params)
             self.callbacks.append(callback)
         return self.callbacks
-
