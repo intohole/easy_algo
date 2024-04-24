@@ -25,7 +25,7 @@ class Optimizer(Enum):
 
 class Loss(Enum):
     MEAN_SQUARED_ERROR = 'mean_squared_error'
-    SIGMOID_CROSS_ENTROPY = 'sigmoid_cross_entropy'
+    BINARY_CROSSENTROY = 'binary_crossentropy'
     SOFTMAX_CROSS_ENTROPY = 'softmax_cross_entropy'
     CATEGORICAL_CROSS_ENTROPY = 'categorical_cross_entropy'
     HINGE = 'hinge'
@@ -45,6 +45,8 @@ class Metrics(Enum):
     PRECISION = 'precision'
     RECALL = 'recall'
     F1_SCORE = 'f1_score'
+    MAE = 'mae'
+    MSE = 'mse'
 
 
 class Callback(Enum):
@@ -52,3 +54,7 @@ class Callback(Enum):
     MODEL_CHECKPOINT = 'model_checkpoint'
     REDUCE_LR_ON_PLATEAU = 'reduce_lr_on_plateau'
 
+
+class ModelType(Enum):
+    DL = "dl"
+    ML = "ml"

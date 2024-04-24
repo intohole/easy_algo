@@ -3,16 +3,23 @@ from tensorflow.keras.models import Model
 from easy_algo.util.manager import ModelFactory
 
 
-class ModelBuilder:
+class ModelBuilder(object):
 
     def __init__(self, config, schema=None):
+        super(ModelBuilder, self).__init__()
         if config is None:
             raise ValueError("Config cannot be None")
-        self.input_layer_map = {_: tf.keras.layers.Input(shape=(10,)) for _ in ["group"]}
+        self.input_layer_map = {}
         self.config = config
         self.schema = schema
-        self.outputs = self.build_model()
-        self.model = Model(inputs=[self.input_layer_map[_] for _ in ["group"]], outputs=self.outputs)
+        self._inputs = []
+        self._model = None
+        self.outputs = None
+
+    def _build_input_layers(self):
+        for group in self.schema.groups:
+            self.input_layer_map.update({group.name: tf.keras.Input(shape=(group.shape,))})
+            self._inputs.append(self.input_layer_map[group.name])
 
     def get_layer(self, layer, *args, **kwargs):
         if isinstance(layer, str) and layer in self.input_layer_map:
@@ -68,3 +75,11 @@ class ModelBuilder:
             if index == len(self.config) - 1:
                 outputs = _layer
         return outputs
+
+    @property
+    def model(self):
+        if self._model is None:
+            self._build_input_layers()
+            self.outputs = self.build_model()
+            self._model = Model(inputs=self._inputs, outputs=self.outputs)
+        return self._model

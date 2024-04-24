@@ -18,8 +18,8 @@ class DeepLayer(tf.keras.layers.Layer):
                             zip(hidden_units, self._activation)]
 
     def call(self, inputs):
-        output = self.denses[0](inputs)
-        for dense in self.denses[1:]:
+        output = self.dense_array[0](inputs)
+        for dense in self.dense_array[1:]:
             output = dense(output)
         return output
 

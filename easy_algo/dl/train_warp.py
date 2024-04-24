@@ -1,31 +1,49 @@
 from easy_algo.util.constant import Optimizer, Loss, Metrics
 
+from easy_algo.util.constant import Optimizer, Loss, Metrics
 
-def compile_model(model, optimizer=Optimizer.ADAM, loss=Loss.MEAN_SQUARED_ERROR,userDefineLoss = None , metrics=None, callbacks=None,**kwargs):
-    """
-    编译Keras模型的函数。
 
-    参数:
-    - model: 一个未编译的Keras模型。
-    - optimizer: 优化器枚举类型。
-    - loss: 损失函数枚举类型。
-    - metrics: 评估指标列表。
-    - callbacks: 回调函数枚举类型列表。
+class ModelTrainner:
+    def __init__(self):
+        pass
 
-    返回:
-    - 一个编译好的Keras模型。
-    """
-    if metrics is None:
-        metrics = [Metrics.ACC.value]
-    optimizer_name = optimizer.value
-    _loss = None
-    if userDefineLoss is not None:
-        _loss = userDefineLoss
-    else:
-        _loss = loss.value
+    def compile(self, *args, **kwargs):
+        raise NotImplementedError
 
-    if callbacks is None:
-        callbacks = []
+    def _compile(self, model, optimizer=Optimizer.ADAM, loss=None, metrics=None, **kwargs):
+        if metrics is None:
+            metrics = [Metrics.ACC.value]
+        optimizer_name = optimizer.value
+        if loss is not None:
+            _loss = loss.value
+        else:
+            raise ValueError("Loss function must be specified")
 
-    model.compile(optimizer=optimizer_name, loss=_loss, metrics=metrics, callbacks=callbacks,**kwargs)
-    return model
+        model.compile(optimizer=optimizer_name, loss=_loss, metrics=metrics, **kwargs)
+        return model
+
+
+class BinaryAcc(ModelTrainner):
+    def __init__(self):
+        super(BinaryAcc, self).__init__()
+
+    def compile(self, model, *args, **kwargs):
+        return self._compile(model, optimizer=Optimizer.SGD, loss=Loss.BINARY_CROSSENTROY,
+                             metrics=[Metrics.ACC.value], **kwargs)
+
+
+class MultiClass(ModelTrainner):
+    def __init__(self):
+        super(MultiClass, self).__init__()
+
+    def compile(self, model, *args, **kwargs):
+        return self._compile(model, optimizer=Optimizer.SGD, loss=Loss.CATEGORICAL_CROSS_ENTROPY)
+
+
+class RegressionMae(ModelTrainner):
+    def __init__(self):
+        super(RegressionMae, self).__init__()
+
+    def compile(self, model, *args, **kwargs):
+        return self._compile(model, optimizer=Optimizer.SGD, loss=Loss.MEAN_SQUARED_ERROR,
+                             metrics=[Metrics.MAE.value, Metrics.MSE.value])

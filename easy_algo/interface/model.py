@@ -1,8 +1,14 @@
 class BaseModel:
-    def __init__(self,*args,**kwargs):
-        self.model = None
+    def __init__(self, *args, **kwargs):
+        self._model = None
         self.params = None
         self.group = None
+
+    @property
+    def model(self):
+        if self._model is None:
+            self.build()
+        return self._model
 
     def build(self):
         pass
