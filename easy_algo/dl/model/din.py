@@ -1,12 +1,13 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Layer, Embedding, Dense, Dropout,concatenate, Input, Lambda
+from tensorflow.keras.layers import Layer, Embedding, Dense, Dropout, concatenate, Input, Lambda
 from tensorflow.keras.models import Model
 import tensorflow.keras.backend as K
 
 
 # DINLayer类用于实现注意力机制的DIN层
 class DINLayer(Layer):
-    def __init__(self, embedding_size, dense_size, attention_size, dropout_rate, **kwargs):
+    def __init__(self, user_feature_size, item_feature_size, embedding_size=128, dense_size=64, attention_size=32,
+                 dropout_rate=0.3, **kwargs):
         # 初始化父类
         super(DINLayer, self).__init__(**kwargs)
 
@@ -80,7 +81,7 @@ class DINLayer(Layer):
 
     def compute_output_shape(self, input_shape):
         # 计算输出形状
-        return (input_shape[0], self.dense_size)
+        return input_shape[0], self.dense_size
 
 
 # DINModel类用于实现完整的DIN模型

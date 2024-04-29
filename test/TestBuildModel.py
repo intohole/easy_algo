@@ -5,7 +5,6 @@ from easy_algo.dl.dl import DL
 from easy_algo.process.processor import PandasProcessor
 
 if __name__ == "__main__":
-
     import pandas as pd
 
     import numpy as np
@@ -25,7 +24,6 @@ if __name__ == "__main__":
     data = {'A': np.random.randint(1, 1000, 1000), 'B': np.random.randint(1, 1000, 1000),
             'C': np.random.choice([0, 1], 1000)}
 
-
     df = pd.DataFrame(data)
 
     a = df['A']
@@ -38,7 +36,8 @@ if __name__ == "__main__":
         {"layer": "dense"},
         "singleSigmoid"
     ]
-    processor = PandasProcessor(model_config=model_define, data_frame=df, features=['A', 'B'], labels=['C'],)
+    processor = PandasProcessor(model_config=model_define, data_frame=df, features=['A'], labels=['C'],
+                                trainer='binaryAcc')
 
     processor.process()
     # schema = FeatureSchema.build_feature_schema(set(), ['feature1'], [int])

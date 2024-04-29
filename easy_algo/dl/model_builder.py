@@ -18,6 +18,8 @@ class ModelBuilder(object):
 
     def _build_input_layers(self):
         for group in self.schema.groups:
+            if group.label:
+                continue
             self.input_layer_map.update({group.name: tf.keras.Input(shape=(group.shape,))})
             self._inputs.append(self.input_layer_map[group.name])
 
