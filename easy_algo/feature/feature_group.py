@@ -1,9 +1,10 @@
 class FeatureGroup:
-    def __init__(self, group_name, features=None):
+    def __init__(self, group_name, features=None, label=False):
         self.name = group_name
         self.shape = None
         self._features = features if features is not None else []
         self.update_shape()
+        self.label = label
 
     @property
     def features(self):
@@ -13,7 +14,11 @@ class FeatureGroup:
         return self._features
 
     def append_feature(self, feature):
-        self.features.append(feature)
+        self._features.append(feature)
+        self.update_shape()
+
+    def del_feature(self, feature):
+        self._features.remove(feature)
         self.update_shape()
 
     def update_shape(self):

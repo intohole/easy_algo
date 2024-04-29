@@ -58,3 +58,9 @@ class Callback(Enum):
 class ModelType(Enum):
     DL = "dl"
     ML = "ml"
+
+
+class Event(Enum):
+    PROCESS = "process"
+    GROUP_CHANGE = "group_change"
+

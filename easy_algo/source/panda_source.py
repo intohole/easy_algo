@@ -1,6 +1,4 @@
-from easy_algo.source.source import DataSource
-from collections import defaultdict
-from easy_algo.util.constant import FeatureType
+from easy_algo.interface.source import DataSource
 import pandas as pd
 
 
@@ -14,6 +12,14 @@ class PandaDataSource(DataSource):
         else:
             self.data_frame = data_frame
         super().__init__(self.data_frame)
+
+    @property
+    def columns(self):
+        return self.data_frame.columns
+
+    @property
+    def dtypes(self):
+        return self.data_frame.dtypes
 
     def select(self, condition):
         if condition is None:
@@ -31,31 +37,7 @@ class PandaDataSource(DataSource):
             raise ValueError("Condition cannot be None")
         self.data_frame[condition] = value
 
-    def get_xy(self, features, test_condition=None):
-        if features is None:
-            raise ValueError("Features cannot be None")
+    def __getitem__(self, item):
+        return self.data_frame[item]
 
-        # 按照group字段划分特征和标签
-        groups = defaultdict(list)
-        for feature in features:
-            if feature.train_able and feature.type == FeatureType.Feature:
-                groups[feature.group].append(feature)
 
-        # 获取每个group的字段名称
-        group_feature_names = {}
-        for group, features in groups.items():
-            feature_names = [feature.feature_name for feature in features]
-            label_names = [feature.feature_name for feature in features if feature.type == FeatureType.label]
-            group_feature_names[group] = (feature_names, label_names)
-
-        # 根据group和划分结果获取特征和标签
-        X = {}
-        y = {}
-        for group, (feature_names, label_names) in group_feature_names.items():
-            X[group] = self.data_frame[feature_names].values
-            y[group] = self.data_frame[label_names].values
-
-        return X, y
-
-    def dtypes(self):
-        return self.data_frame.dtypes

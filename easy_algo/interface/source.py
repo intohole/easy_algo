@@ -1,8 +1,3 @@
-import pandas as pd
-from easy_algo.util.constant import FeatureType
-from collections import defaultdict
-
-
 class DataSource(object):
 
     def __init__(self, data):
@@ -20,9 +15,5 @@ class DataSource(object):
     def drop(self, condition):
         raise NotImplementedError
 
-    def get_xy(self, features):
-        raise NotImplementedError
-
     def dtypes(self):
         pass
-

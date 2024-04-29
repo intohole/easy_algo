@@ -2,23 +2,11 @@ from easy_algo.dl.model import *
 
 from easy_algo.feature.schema import FeatureSchema
 from easy_algo.dl.dl import DL
+from easy_algo.process.processor import PandasProcessor
 
 if __name__ == "__main__":
-    schema = FeatureSchema.build_feature_schema(set(), ['feature1'], [int])
 
-    model_define = [
-
-        [["group0", "dense"], ["group0", "dense"]],
-        "concat",
-        "dnn",
-        {"layer": "dense"},
-        "singleSigmoid"
-    ]
-
-    # 构建模型
-    dl = DL(model_define, schema, 'binaryAcc')
-
-    # 编译模型
+    import pandas as pd
 
     import numpy as np
 
@@ -33,9 +21,35 @@ if __name__ == "__main__":
 
     # 生成标签，一半为1，一半为0
     labels = np.random.randint(0, 2, num_samples)
+    # 创建一个包含三列数据的DataFrame，最后一列为0和1
+    data = {'A': np.random.randint(1, 1000, 1000), 'B': np.random.randint(1, 1000, 1000),
+            'C': np.random.choice([0, 1], 1000)}
 
-    dl.model.summary()
 
-    dl.fit(x=[feature_matrix1], y=labels)
+    df = pd.DataFrame(data)
+
+    a = df['A']
+    print(a[:10])
+    model_define = [
+
+        [["group0", "dense"], ["group0", "dense"]],
+        "concat",
+        "dnn",
+        {"layer": "dense"},
+        "singleSigmoid"
+    ]
+    processor = PandasProcessor(model_config=model_define, data_frame=df, features=['A', 'B'], labels=['C'],)
+
+    processor.process()
+    # schema = FeatureSchema.build_feature_schema(set(), ['feature1'], [int])
+    #
+    # # 构建模型
+    # dl = DL(model_define, schema, 'binaryAcc')
+    #
+    # # 编译模型
+    #
+    # dl.model.summary()
+    #
+    # dl.fit(x=[feature_matrix1], y=labels)
 
     # 打印模型结构

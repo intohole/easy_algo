@@ -1,5 +1,3 @@
-from matplotlib.scale import LogTransform
-
 from easy_algo.operation.operation import *
 
 
@@ -10,7 +8,7 @@ class FeatureOperationFactory:
         "equalWidthBucket": FeatureEqualWidth,
         "oneHot": OneHotEncoding,
         "labelEncode": LabelEncoding,
-        "logTransform": LogTransform,
+        "logTransform": LogTransformation,
         "power": PowerTransformation,
         "modeMissing": ModeMissingValueImputation,
         "meanMissing": MeanMissingValueImputation,

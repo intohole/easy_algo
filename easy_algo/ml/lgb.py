@@ -20,25 +20,25 @@ class LrBinaryClassifierBuilder(BaseModel):
 
     def build(self):
         # 默认参数可以根据需要进行调整
-        self.model = LogisticRegression(max_iter=1000, random_state=42)
+        self._model = LogisticRegression(max_iter=1000, random_state=42)
 
 
 class LrTrainer(BaseModel):
 
     def train(self, x, y):
-        self.model.fit(x, y)
+        self._model.fit(x, y)
 
 
 class LrPredict(BaseModel):
 
     def predict(self, x):
-        return self.model.predict(x)
+        return self._model.predict(x)
 
 
 class LgbBinaryClassifierBuilder(BaseModel):
 
     def build(self):
-        self.model = lgb.LGBMClassifier(
+        self._model = lgb.LGBMClassifier(
             **EnhancedLightGBMConfig(TaskType.CLASSIFICATION).get_config()
         )
 
@@ -46,12 +46,12 @@ class LgbBinaryClassifierBuilder(BaseModel):
 class LgbMultiClassifierBuilder(BaseModel):
 
     def build(self):
-        self.model = lgb.LGBMClassifier(**EnhancedLightGBMConfig(TaskType.MULTICLASS_CLASSIFICATION).get_config())
+        self._model = lgb.LGBMClassifier(**EnhancedLightGBMConfig(TaskType.MULTICLASS_CLASSIFICATION).get_config())
 
 
 class LgbRegressorBuilder(BaseModel):
     def build(self):
-        self.model = lgb.LGBMRegressor(
+        self._model = lgb.LGBMRegressor(
             **EnhancedLightGBMConfig(TaskType.REGRESSION).get_config()
         )
 
@@ -59,13 +59,13 @@ class LgbRegressorBuilder(BaseModel):
 class FitTrainer(BaseModel):
 
     def train(self, x, y):
-        self.model.fit(x, y)
+        self._model.fit(x, y)
 
 
 class ModelPredict(BaseModel):
 
     def predict(self, x):
-        self.model.predict(x)
+        self._model.predict(x)
 
 
 class LgbBinaryClassifierAccEvaluator(BaseModel):
@@ -88,7 +88,7 @@ class LgbRegressorMseEvaluator(BaseModel):
 class LgbBinaryClassifierAucEvaluator(BaseModel):
     def evaluate(self, x, y):
         # 计算AUC
-        predictions_proba = self.model.predict_proba(x)[:, 1]  # 获取正类的预测概率
+        predictions_proba = self._model.predict_proba(x)[:, 1]  # 获取正类的预测概率
         auc = roc_auc_score(y, predictions_proba)
         print(f"AUC: {auc}")
         return auc

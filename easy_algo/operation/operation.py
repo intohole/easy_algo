@@ -1,51 +1,9 @@
+from keras_preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder, LabelEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import PowerTransformer
 import numpy as np
-
-
-class FeatureOperation:
-    def __init__(self, name, suffix_name=None):
-        self.name = name
-        self._feature = None
-        self._cover_name = False
-        self.suffix_name = suffix_name
-
-    @property
-    def feature(self):
-        return self._feature
-
-    @property
-    def cover_name(self):
-        return self._cover_name
-
-    @cover_name.setter
-    def cover_name(self, value):
-        self._cover_name = value
-
-    @feature.setter
-    def feature(self, feature):
-        self._feature = feature
-
-    def get_feature_name(self, field):
-        if self.cover_name:
-            return "%s_%s" % (field, self.suffix_name)
-        else:
-            return field
-
-    def process(self, data_source, field):
-        raise NotImplementedError
-
-    def __getstate__(self):
-        # 定义在序列化时需要保存的状态
-        return self.__dict__
-
-    def __setstate__(self, state):
-        # 定义在反序列化时需要设置的状态
-        self.__dict__ = state
-
-    def to_java_code(self):
-        raise NotImplementedError
+from easy_algo.interface.operation import FeatureOperation
 
 
 class MinMaxNormalization(FeatureOperation):
@@ -235,3 +193,39 @@ class DataTypeConversion(FeatureOperation):
     def process(self, data_source, field):
         # 转换数据类型
         data_source.data[self.get_feature_name(field)] = data_source.data[field].astype(self.to_type)
+
+
+class CharLevelFeature(FeatureOperation):
+    def __init__(self, max_length, stopwords=None):
+        super(CharLevelFeature, self).__init__("charLevelFeature", suffix_name="char")
+        self.max_length = max_length
+        self.stopwords = stopwords if stopwords else set()
+
+    def process(self, data_source, field):
+        # 假设 data_source 是一个包含数据字典的对象
+        # field 是数据字典中需要处理的文本字段名
+        char_features = []
+
+        for text in data_source.data[field]:
+            # 将文本转换为字符列表，并去除停用词
+            chars = [char for char in text if char not in self.stopwords]
+            char_features.append(chars)
+
+        # 将字符列表转换为字符索引序列，并填充或截断到指定长度
+        unique_chars = set(''.join([''.join(chars) for chars in char_features]))
+        char2idx = {char: idx for idx, char in enumerate(unique_chars)}
+        idx_features = pad_sequences([[char2idx[char] for char in chars] for chars in char_features],
+                                     maxlen=self.max_length, padding='post', truncating='post')
+
+        # 将字符索引序列添加到数据源中
+        data_source.data[self.get_feature_name(field)] = idx_features
+
+    def to_java_code(self):
+        # 这个方法应该返回将这个类的功能转换为Java代码的字符串
+        # 由于这涉及到Java语法和可能的类结构变化，这里只提供了一个框架
+        java_code = """
+        public class CharLevelFeature {
+            // Java实现代码
+        }
+        """
+        return java_code
